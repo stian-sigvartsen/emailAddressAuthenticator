@@ -3,6 +3,8 @@ package com.example.authenticator;
 import java.util.Map;
 
 import com.example.authenticator.validator.EmailAddressValidator;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.AuthException;
 import com.liferay.portal.kernel.security.auth.Authenticator;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -52,8 +54,11 @@ public class EmailAddressAuthenticator implements Authenticator {
 	private int validateDomain(String emailAddress) throws AuthException {
 		
 		if (_emailValidator == null) {
-			throw new AuthException(
-				"Email address validator is unavailable, cannot authenticate user");
+			
+			String msg = "Email address validator is unavailable, cannot authenticate user";			
+			_log.error(msg);
+			
+			throw new AuthException(msg);
 		}
 		
 		if (_emailValidator.isValidEmailAddress(emailAddress)) {		
@@ -69,5 +74,7 @@ public class EmailAddressAuthenticator implements Authenticator {
 		policy = ReferencePolicy.DYNAMIC,
 		cardinality = ReferenceCardinality.OPTIONAL
 	)
-	private volatile EmailAddressValidator _emailValidator;	
+	private volatile EmailAddressValidator _emailValidator;
+	
+	private static final Log _log = LogFactoryUtil.getLog(EmailAddressAuthenticator.class);
 }
