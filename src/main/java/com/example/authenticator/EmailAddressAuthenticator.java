@@ -9,6 +9,8 @@ import com.liferay.portal.kernel.service.UserLocalService;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(
 	immediate = true,
@@ -49,6 +51,11 @@ public class EmailAddressAuthenticator implements Authenticator {
 	
 	private int validateDomain(String emailAddress) throws AuthException {
 		
+		if (_emailValidator == null) {
+			throw new AuthException(
+				"Email address validator is unavailable, cannot authenticate user");
+		}
+		
 		if (_emailValidator.isValidEmailAddress(emailAddress)) {		
 			return Authenticator.SUCCESS;
 		}
@@ -58,6 +65,9 @@ public class EmailAddressAuthenticator implements Authenticator {
 	@Reference
 	private volatile UserLocalService _userLocalService;
 	
-	@Reference  
+	@Reference(
+		policy = ReferencePolicy.DYNAMIC,
+		cardinality = ReferenceCardinality.OPTIONAL
+	)
 	private volatile EmailAddressValidator _emailValidator;	
 }
