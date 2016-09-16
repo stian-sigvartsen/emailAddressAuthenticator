@@ -1,2 +1,3 @@
 Bundle-SymbolicName: emailaddressauthenticator
 Bundle-Version: 1.0.0
+Export-Package: com.example.authenticator.validator
